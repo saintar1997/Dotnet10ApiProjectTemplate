@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: enterprise-db
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: YourStrong!Password
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+      - ./SQL_Script:/docker-entrypoint-initdb.d
+    networks:
+      - enterprise-network
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: EnterpriseWeb.API/Dockerfile
+    container_name: enterprise-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=db;Database=EnterpriseWeb_DB;User Id=sa;Password=YourStrong!Password;TrustServerCertificate=True;
+      - Jwt__Key=YOUR_STRONG_SECRET_KEY_AT_LEAST_32_CHARS
+      - Seq__ServerUrl=http://seq:5341
+    ports:
+      - "5001:80"
+    depends_on:
+      - db
+      - seq
+    networks:
+      - enterprise-network
+
+  admin:
+    build:
+      context: ./frontend/client-admin
+      dockerfile: Dockerfile
+    container_name: enterprise-admin
+    ports:
+      - "5174:80"
+    depends_on:
+      - api
+    networks:
+      - enterprise-network
+
+  web:
+    build:
+      context: ./frontend/client-web
+      dockerfile: Dockerfile
+    container_name: enterprise-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    networks:
+      - enterprise-network
+
+  seq:
+    image: datalust/seq:latest
+    container_name: enterprise-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+    volumes:
+      - seq_data:/data
+    networks:
+      - enterprise-network
+
+volumes:
+  sql_data:
+  seq_data:
+
+networks:
+  enterprise-network:
+    driver: bridge

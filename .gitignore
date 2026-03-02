@@ -1,0 +1,33 @@
+# Build outputs
+bin/
+obj/
+out/
+publish/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Claude
+.claude/
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Secrets (ensure these are never committed)
+# appsettings.*.json (keep only appsettings.json as template)
+appsettings.*.json
+!appsettings.json
+
+# Environment files
+.env
+.env.*
+!.env.example

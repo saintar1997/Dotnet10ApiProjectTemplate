@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="EnterpriseWeb.API/EnterpriseWeb.API.csproj" />
+  <Project Path="EnterpriseWeb.Application/EnterpriseWeb.Application.csproj" />
+  <Project Path="EnterpriseWeb.Domain/EnterpriseWeb.Domain.csproj" />
+  <Project Path="EnterpriseWeb.Infrastructure/EnterpriseWeb.Infrastructure.csproj" />
+</Solution>
